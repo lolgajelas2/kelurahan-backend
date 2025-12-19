@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Kontak;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\BalasanPesanKontak;
+use Illuminate\Support\Facades\Mail;
 
 class KontakController extends Controller
 {
@@ -153,6 +155,41 @@ class KontakController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Pesan berhasil dihapus'
+        ]);
+    }
+
+    /**
+     * Send a reply to a contact message.
+     */
+    public function reply(Request $request, string $id)
+    {
+        $kontak = Kontak::find($id);
+        if (!$kontak) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pesan tidak ditemukan'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'balasan' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Kirim email balasan
+        Mail::to($kontak->email)->send(new BalasanPesanKontak($kontak, $request->balasan));
+        // Update status menjadi dibalas
+        $kontak->update(['status' => 'dibalas']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Balasan berhasil dikirim',
         ]);
     }
 }

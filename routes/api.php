@@ -63,4 +63,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kontak/{id}', [KontakController::class, 'show']);
     Route::put('/kontak/{id}', [KontakController::class, 'update']);
     Route::delete('/kontak/{id}', [KontakController::class, 'destroy']);
+    Route::post('/kontak/{id}/reply', [KontakController::class, 'reply']);
 });
