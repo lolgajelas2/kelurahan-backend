@@ -3,6 +3,27 @@ set -e
 
 echo "🚀 Starting deployment..."
 
+# Debug: Print Railway environment variables
+echo "🔍 DEBUG - Railway Environment Variables:"
+echo "MYSQLHOST: ${MYSQLHOST:-NOT SET}"
+echo "MYSQLPORT: ${MYSQLPORT:-NOT SET}"
+echo "MYSQLDATABASE: ${MYSQLDATABASE:-NOT SET}"
+echo "MYSQLUSER: ${MYSQLUSER:-NOT SET}"
+echo "MYSQLPASSWORD: ${MYSQLPASSWORD:+SET (hidden)}"
+echo "DB_HOST: ${DB_HOST:-NOT SET}"
+echo "DB_PORT: ${DB_PORT:-NOT SET}"
+echo "DB_DATABASE: ${DB_DATABASE:-NOT SET}"
+echo "DB_USERNAME: ${DB_USERNAME:-NOT SET}"
+echo "DB_PASSWORD: ${DB_PASSWORD:+SET (hidden)}"
+echo ""
+
+# Use MYSQL* variables if DB_* not set (Railway reference format)
+DB_HOST="${DB_HOST:-${MYSQLHOST}}"
+DB_PORT="${DB_PORT:-${MYSQLPORT}}"
+DB_DATABASE="${DB_DATABASE:-${MYSQLDATABASE}}"
+DB_USERNAME="${DB_USERNAME:-${MYSQLUSER}}"
+DB_PASSWORD="${DB_PASSWORD:-${MYSQLPASSWORD}}"
+
 # Create .env from Railway environment variables
 echo "📝 Creating .env file..."
 cat > .env << EOF
@@ -29,7 +50,12 @@ LOG_LEVEL=error
 EOF
 
 echo "✅ .env file created"
-cat .env
+echo "📋 Database config being used:"
+echo "DB_HOST: ${DB_HOST:-NOT SET}"
+echo "DB_PORT: ${DB_PORT:-3306}"
+echo "DB_DATABASE: ${DB_DATABASE:-railway}"
+echo "DB_USERNAME: ${DB_USERNAME:-root}"
+echo ""
 
 # Wait for MySQL to be ready
 echo "⏳ Waiting for MySQL..."
