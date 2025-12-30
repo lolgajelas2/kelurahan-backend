@@ -5,7 +5,7 @@ echo "🚀 Starting deployment..."
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 
 # Clear and cache config
 echo "⚙️ Caching configuration..."
