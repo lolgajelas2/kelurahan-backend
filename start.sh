@@ -47,6 +47,9 @@ CACHE_STORE=database
 QUEUE_CONNECTION=database
 LOG_CHANNEL=stack
 LOG_LEVEL=error
+
+FONNTE_TOKEN=${FONNTE_TOKEN:-}
+FONNTE_URL=${FONNTE_URL:-https://api.fonnte.com/send}
 EOF
 
 echo "✅ .env file created"
