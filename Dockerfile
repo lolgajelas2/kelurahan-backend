@@ -29,6 +29,10 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
+# Copy start script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
@@ -43,10 +47,4 @@ EXPOSE 8080
 ENV PORT=8080
 
 # Start script
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php artisan migrate --force && \
-    php artisan db:seed --force && \
-    php artisan storage:link && \
-    php artisan serve --host=0.0.0.0 --port=${PORT}
+CMD ["/usr/local/bin/start.sh"]
