@@ -79,10 +79,17 @@ fi
 
 echo "✅ MySQL is ready!"
 
-# Clear all caches
-echo "🧹 Clearing caches..."
+# Clear config only (before migration)
+echo "🧹 Clearing config cache..."
 php artisan config:clear
-php artisan cache:clear
+
+# Run migrations FIRST (create tables)
+echo "🗄️ Running migrations..."
+php artisan migrate --force
+
+# Now clear all caches (after tables exist)
+echo "🧹 Clearing all caches..."
+php artisan cache:clear || echo "⚠️ Cache clear skipped (table may not exist yet)"
 php artisan view:clear
 php artisan route:clear
 
@@ -91,10 +98,6 @@ echo "📦 Caching configuration..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-# Run migrations
-echo "🗄️ Running migrations..."
-php artisan migrate --force
 
 # Run seeders
 echo "🌱 Running seeders..."
