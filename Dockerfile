@@ -1,5 +1,5 @@
-# Use PHP 8.2 with Apache
-FROM php:8.2-apache
+# Use PHP 8.2
+FROM php:8.2-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -35,13 +35,11 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-pl
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Apache configuration
-RUN a2enmod rewrite
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
 # Expose port
-EXPOSE 80
+EXPOSE 8080
+
+# Environment variable for port
+ENV PORT=8080
 
 # Start script
 CMD php artisan config:cache && \
@@ -50,4 +48,4 @@ CMD php artisan config:cache && \
     php artisan migrate --force && \
     php artisan db:seed --force && \
     php artisan storage:link && \
-    apache2-foreground
+    php artisan serve --host=0.0.0.0 --port=${PORT}
