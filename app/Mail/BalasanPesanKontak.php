@@ -31,7 +31,8 @@ class BalasanPesanKontak extends Mailable
      */
     public function build()
     {
-        $mail = $this->to($this->kontak->email, $this->kontak->nama)
+        // Kirim email dengan format plain (tanpa nama)
+        $mail = $this->to($this->kontak->email)
             ->subject('Balasan Pesan Anda - Kelurahan Graha Indah')
             ->view('emails.balasan_pesan_kontak')
             ->with([
@@ -39,9 +40,9 @@ class BalasanPesanKontak extends Mailable
                 'balasan' => $this->balasan,
             ]);
         
-        // Override FROM jika diberikan (untuk Resend)
+        // Override FROM jika diberikan (untuk Resend) - tanpa nama juga
         if ($this->fromEmail) {
-            $mail->from($this->fromEmail, $this->fromName ?? config('mail.from.name'));
+            $mail->from($this->fromEmail);
         }
         
         return $mail;
