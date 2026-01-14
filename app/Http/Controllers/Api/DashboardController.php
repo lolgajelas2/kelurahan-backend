@@ -26,6 +26,7 @@ class DashboardController extends Controller
         ];
 
         $recentApplications = Permohonan::with('layanan')
+                                     ->whereHas('layanan') // Only get permohonan with valid layanan
                                      ->orderBy('created_at', 'desc')
                                      ->limit(5)
                                      ->get();
